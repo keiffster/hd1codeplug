@@ -1,5 +1,8 @@
-from openpyxl import load_workbook
 import sys
+import os
+import csv
+from openpyxl import load_workbook
+
 
 class HD1CodePlugSystem:
 
@@ -59,6 +62,9 @@ class HD1CodePlugPriorityContact:
     def __str__(self):
         return "{0}, {1}, {2}, {3}".format(self._number, self._call_type, self._contact_alias, self._call_id)
 
+    def populate_fields(self):
+        return [self._number, self._call_type, self._call_type, "", "", "", self._call_id]
+
 
 class HD1CodePlugChannelInformation:
 
@@ -74,19 +80,19 @@ class HD1CodePlugChannelInformation:
         self._talkgroup = tg
         self._template = template
 
-    def to_row(self):
+    def populate_fields(self):
         working = self._template._data.copy()
 
-        self._replace(working, "$NUMBER", str(self._number))
-        self._replace(working, "$TX", str(self._system._tx))
-        self._replace(working, "$RX", str(self._system._rx))
-        self._replace(working, "$ALIAS", str(self._talkgroup._short_name))
+        self._replace(working, "$NUMBER", self._number)
+        self._replace(working, "$TX", self._system._tx)
+        self._replace(working, "$RX", self._system._rx)
+        self._replace(working, "$ALIAS", self._talkgroup._short_name)
         self._replace(working, "$SLOT", "Slot{0}".format(self._talkgroup._slot))
         self._replace(working, "$CONTACT", "Priority Contacts: TG {0}".format(self._talkgroup._talkgroup))
 
         self._replace(working, "$RADIOID", self._system._radio_id)
 
-        return ", ".join(working)
+        return working
     
     def _replace(self, working, name, value):
         index = 0
@@ -97,11 +103,22 @@ class HD1CodePlugChannelInformation:
             index = index + 1
 
 
+BASE_INFO_SHEET = "HD1 Base Info"
+
+PRIORITY_CONTACTS_SHEET = "HD1 Priority Contacts"
+PRIORITY_CONTACTS_HEADER = "No.,Call Type,Contacts Alias,City,Province,Country,Call ID"
+
+CHANNEL_INFORMATION_SHEET = "HD1 Channel Information"
+CHANNEL_INFORMATION_HEADER = "No.,Channel Type,Channel Alias,Rx Frequency,Tx Frequency,Tx Power,TOT,VOX,VOX Level,Scan Add/Step,Channel Work Alone,Default to Talkaround,Band Width,Dec QT/DQT,Enc QT/DQT,Tx Authority,Relay,Work Mode,Slot,ID Setting,Color Code,Encryption,Encryption Type,Encryption Key,Promiscuous,Tx Authority,Kill Code,WakeUp Code,Contacts,Rx Group Lists,Group Lists 1,Group Lists 2,Group Lists 3,Group Lists 4,Group Lists 5,Group Lists 6,Group Lists 7,Group Lists 8,Group Lists 9,Group Lists 10,Group Lists 11,Group Lists 12,Group Lists 13,Group Lists 14,Group Lists 15,Group Lists 16,Group Lists 17,Group Lists 18,Group Lists 19,Group Lists 20,Group Lists 21,Group Lists 22,Group Lists 23,Group Lists 24,Group Lists 25,Group Lists 26,Group Lists 27,Group Lists 28,Group Lists 29,Group Lists 30,Group Lists 31,Group Lists 32,Group Lists 33,GPS,Send GPS Info,Receive GPS Info,GPS Timing Report,GPS Timing Report TX Contacts"
+
+ADDRESS_BOOK_CONTACTS_SHEET = "HD1 Address Book Contacts"
+
 class HD1CodePlugSpreadsheet:
+
 
     def __init__(self, 
                  spreadsheet_filename,
-                 config_sheet = "HD1 Base Info"):
+                 config_sheet = BASE_INFO_SHEET):
         
         print("Loading workbook: ", spreadsheet_filename)
 
@@ -128,8 +145,6 @@ class HD1CodePlugSpreadsheet:
         print("Loading configuration from: ", self._config_sheet)
 
         self._load_base_info()
-
-        self._load_talkgroups()
 
     def _load_base_info(self):
         base_info = self._workbook[self._config_sheet]
@@ -195,7 +210,9 @@ class HD1CodePlugSpreadsheet:
                 end_cell = "{0}{1}".format(end_column, line_count)
 
                 items = base_info["{0}".format(start_cell):"{0}".format(end_cell)]
-                data = [str(cell.value) for cell in items[0]]
+                # data = [str(cell.value) for cell in items[0]]
+                data = [cell.value for cell in items[0]]
+
 
                 self._templates[name] = HD1CodePlugTemplate(name, data)
 
@@ -204,7 +221,7 @@ class HD1CodePlugSpreadsheet:
 
             line_count = line_count + 1     
 
-    def _load_talkgroups(self):
+    def load_talkgroups(self):
 
         for talkgroup_system in self._systems.values():
             print("Loading talkgroups for:", talkgroup_system._talkgroup_sheet_name)
@@ -219,12 +236,12 @@ class HD1CodePlugSpreadsheet:
 
     def create_priority_contacts(self):
 
-        print("\tGenerating Priority Contacts")
+        print("Generating Priority Contacts")
 
         talkgroup_ids = []
 
         for talkgroup_system in self._systems.values():
-            print("\t\tProcessing talkgroups for:", talkgroup_system._talkgroup_sheet_name)
+            print("\tProcessing talkgroups for:", talkgroup_system._talkgroup_sheet_name)
             for tg in talkgroup_system.talkgroups():
                 talkgroup_ids.append(tg)
 
@@ -238,15 +255,49 @@ class HD1CodePlugSpreadsheet:
             self._priority_contacts.append(pc)
             count = count + 1
 
+        self._write_priority_contacts_to_worksheet()
+
+    def _create_new_worksheet(self, worksheet_name, idx):
+
+        if worksheet_name in self._workbook.sheetnames:
+            idx = self._workbook.sheetnames.index(worksheet_name)
+            self._workbook.remove(self._workbook[worksheet_name])
+
+        ws =  self._workbook.create_sheet(worksheet_name, idx)
+
+        return ws
+
+    def _write_priority_contacts_to_worksheet(self):
+
+        priority_contacts_ws = self._create_new_worksheet(PRIORITY_CONTACTS_SHEET, 1)
+
+        fields = PRIORITY_CONTACTS_HEADER.split(",")
+        column = 1
+        for field in fields:
+            priority_contacts_ws.cell(1, column).value = field
+            column = column + 1
+
+        row = 2        
+        for contact in self._priority_contacts:
+
+            fields = contact.populate_fields()
+
+            column = 1
+            for field in fields:
+                priority_contacts_ws.cell(row, column).value = field
+                column = column + 1
+
+            row = row + 1
+
     def create_channel_information(self):
 
-        print("\tGenerating Channel Informatio")
+        print("Generating Channel Informatio")
 
         count = 1
         for talkgroup_system in self._systems.values():
-            print("\t\tProcessing talkgroups for:", talkgroup_system._talkgroup_sheet_name)
+            print("\tProcessing talkgroups for:", talkgroup_system._talkgroup_sheet_name)
    
-            print("\t\t\tLoading template: ", talkgroup_system._template)
+            print("\t\tLoading template: ", talkgroup_system._template)
             template = self._templates[talkgroup_system._template]
 
             for tg in talkgroup_system._talkgroups.values():
@@ -254,15 +305,74 @@ class HD1CodePlugSpreadsheet:
                 self._channels.append(ci)
                 count = count + 1
 
+        self._write_channel_info_to_worksheet()
+
+    def _write_channel_info_to_worksheet(self):
+
+        channel_info_ws =  self._create_new_worksheet(CHANNEL_INFORMATION_SHEET, 2)
+
+        fields = CHANNEL_INFORMATION_HEADER.split(",")
+        column = 1
+        for field in fields:
+            channel_info_ws.cell(1, column).value = field
+            column = column + 1
+
+        row = 2
         for channel in self._channels:
-            print(channel.to_row())        
+
+            fields = channel.populate_fields()
+
+            column = 1
+            for field in fields:
+                channel_info_ws.cell(row, column).value = field
+                column = column + 1
+
+            row = row + 1
+
+    def create_xlsx(self):
+        codeplug.load_talkgroups()
+        codeplug.create_priority_contacts()
+        codeplug.create_channel_information()
+        #codeplug.save(self.__spreadsheet_filename)
+        codeplug.save("working2.xlsx")
+
+    def save(self, filename):
+        print("Saving workbook '{0}".format(filename))
+
+        self._workbook.save(filename)
+
+    def create_csvs(self):
+
+        self._export_sheet_csv(PRIORITY_CONTACTS_SHEET)
+        self._export_sheet_csv(CHANNEL_INFORMATION_SHEET)
+        self._export_sheet_csv(ADDRESS_BOOK_CONTACTS_SHEET)
+
+    def _export_sheet_csv(self, sheet_name):
+
+        print("Writing {0} to csv".format(sheet_name))
+
+        ws = self._workbook[sheet_name]
+        if not ws:
+            print("Worksheet '{0}' does not existing, skipping csv".format(sheet_name))
+
+        filepath = sheet_name+".csv"
+
+        if os.path.exists(filepath):
+            os.remove(filepath)
+
+        with open(filepath, 'w', newline="") as f:
+            c = csv.writer(f)
+            for r in ws.rows:
+                c.writerow([cell.value for cell in r])
 
 
 if __name__ == '__main__':
 
     codeplug = HD1CodePlugSpreadsheet(sys.argv[1])
     
-    codeplug.create_priority_contacts()
-
-    codeplug.create_channel_information()
-
+    if sys.argv[2] == 'xlsx':
+        codeplug.create_xlsx()
+    elif sys.argv[2] == 'csv':
+        codeplug.create_csvs()
+    else:
+        print("Unknown command line option xlsx or csv only")
