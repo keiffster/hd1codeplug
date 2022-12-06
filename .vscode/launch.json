@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": ["working.xlsx"],
+            "args": ["working.xlsx", "xlsx", "working2.xlsx"],
             "justMyCode": true
         }
     ]
