@@ -14,6 +14,12 @@ python3 codeplug.py input.xlsx xlsx output.xlsx
 ## Create associated CSV Files
 python3 codeplug.py input.xlsx csv
 
+This will create the following files that can be loaded into your HD1 software
+
+- HD1 Channel Information.csv
+- HD1 Priority Contacts.csv
+- HD1 Address Book Contacts.csv
+
 ## Template Excel Sheet
 
 
