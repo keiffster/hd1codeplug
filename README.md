@@ -27,7 +27,7 @@ This will create the following files that can be loaded into your HD1 software
 
 ## Template Excel Sheet
 
-- HD! Base Info
+- HD1 Base Info
 - HD1 Priority Contacts
 - HD1 Channel Information
 - HD1 Zone Information
