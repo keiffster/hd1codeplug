@@ -3,6 +3,7 @@ This is an excel worksheet and associated Python script that is used to create t
 
 ## Installation 
 The code itself relies on the open 'openpyxl' Python library. To install use pip
+
 pip install openpyxl
 
 The copy the scipt into the folder that contains you excel spreasheet
