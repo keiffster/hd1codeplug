@@ -27,4 +27,19 @@ This will create the following files that can be loaded into your HD1 software
 
 ## Template Excel Sheet
 
+- HD! Base Info
+- HD1 Priority Contacts
+- HD1 Channel Information
+- HD1 Zone Information
+- HD1 Address Book Contacts
+- DVS Talkgroups
+- BM Talkgroups
+- TGIF Talkgroups
+- VFO Channel Info
+- PMR Channel Info
+- Marine Channel Info
+- UK Analog Repeaters
+- UK Digital DMR Repeaters
+
+
 
