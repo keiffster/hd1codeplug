@@ -41,5 +41,12 @@ This will create the following files that can be loaded into your HD1 software
 - UK Analog Repeaters
 - UK Digital DMR Repeaters
 
+## TODO
+The following is just a list of things I want to add to the script
 
+- Add support for Marine Frequencies
+- Make frequency validating config driven
+- More documentation
+- More error handling
+- Installtion package
 
