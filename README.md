@@ -40,49 +40,50 @@ This will create the following files that can be loaded into your HD1 software
 The script current ships with a template xlsx file that should get you started. Its is Scotland focused and is set up to use the 3 hotspots and DMR networks that I play with
 
 - HD1 Base Info. 
--- This contains the se4t of sheets that control the script
--- Before using it you need to set your Radio ID in Cell A2
--- You then decide which set of talk groups and which networks you want to combine
+  - This contains the se4t of sheets that control the script
+  - Before using it you need to set your Radio ID in Cell A2
+  -  You then decide which set of talk groups and which networks you want to combine
 
 - HD1 Priority Contacts
--- This is auto generated
--- This contains the list of all the priority contacts to load into your HD1
+  - This is auto generated
+  - This contains the list of all the priority contacts to load into your HD1
 
 - HD1 Channel Information
--- This is auto generated
--- This contains the list of all the channels to load into your HD1
+  - This is auto generated
+  - This contains the list of all the channels to load into your HD1
 
 - HD1 Zone Information
--- This is auto generated
--- To help you set up your zones because the HD1 does not allow you to inport
--- It lists the channels it auto created and their number. You can then create which ever zones you want. I typically create one zone for each hotspot or channel grouping
+  - This is auto generated
+  - To help you set up your zones because the HD1 does not allow you to inport
+  - It lists the channels it auto created and their number. You can then create which ever zones you want. I typically create one zone for each hotspot or channel grouping
 
 - HD1 Address Book Contacts
--- This is optional, but a good place to keep all your contacts
--- If it exists an associated CSV file for importing to the HD1 will be created
+  - This is optional, but a good place to keep all your contacts
+  - If it exists an associated CSV file for importing to the HD1 will be created
 
 - DVS Talkgroups
--- A list of DV Scotland talkgroups I typically use
+ - A list of DV Scotland talkgroups I typically use
 
 - BM Talkgroups
--- A list of Brandmeister talkgroups I typically use
+ - A list of Brandmeister talkgroups I typically use
 
 - TGIF Talkgroups
--- A list of TGIF talkgroups I typically use
+ - A list of TGIF talkgroups I typically use
 
 - VFO Channel Info
--- The 2 VFO channels that are the first 2 channles in the channels sheet
+  - The 2 VFO channels that are the first 2 channles in the channels sheet
+
 - PMR Channel Info
--- List of UK PMR Channels
+  - List of UK PMR Channels
 
 - Marine Channel Info
--- List of UK Marine channels ( Still work in progress )
+  - List of UK Marine channels ( Still work in progress )
 
 - UK Analog Repeaters
--- List of UK Analog repeaters
+  - List of UK Analog repeaters
 
 - UK Digital DMR Repeaters
--- List of UK Digital repeaters
+  - List of UK Digital repeaters
 
 
 ## TODO
