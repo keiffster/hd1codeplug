@@ -36,6 +36,13 @@ This will create the following files that can be loaded into your HD1 software
 - HD1 Priority Contacts.csv
 - HD1 Address Book Contacts.csv
 
+## Using the CSV Files
+Once you have created the CSV files you need to load them in a specific order ( this is normal and not specific to this code )
+- HD1 Address Book Contacts.csv - Optional, loads all the individual contacs you want to store
+- HD1 Channel Information.csv - Next load the channels
+- HD1 Priority Contacts.csv - Finally load the contacts, this file references the Address Book and Channel Information files, so has to be loaded last
+
+
 ## Template Excel Sheet
 The script current ships with a template xlsx file that should get you started. Its is Scotland focused and is set up to use the 3 hotspots and DMR networks that I play with
 
@@ -84,6 +91,7 @@ The script current ships with a template xlsx file that should get you started. 
 
 - UK Digital DMR Repeaters
   - List of UK Digital repeaters
+
 
 
 ## TODO
