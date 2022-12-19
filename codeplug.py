@@ -175,7 +175,7 @@ class HD1CodePlugPriorityContact:
         return "{0}, {1}, {2}, {3}".format(self._number, self._call_type, self._contact_alias, self._call_id)
 
     def populate_fields(self):
-        return [self._number, self._call_type, self._call_type, "", "", "", self._call_id]
+        return [self._number, self._call_type, self._contact_alias, "", "", "", self._call_id]
 
 
 BASE_INFO_SHEET = "HD1 Base Info"
